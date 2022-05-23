@@ -17,16 +17,18 @@ const readDirectory = (fileName) => {
 };
 
 const getResult = (fullPath) => {
-  if(fs.lstatSync(fullPath).isFile()) {
-    let stats = fs.statSync(fullPath);
-    const size = stats.size/1000 + 'kb';
-    const extension = path.extname(fullPath);
-    const name = path.basename(fullPath).replace(extension, '');
-    console.log(`${name} - ${extension} - ${size}`);
-  } else {
-    readDirectory(fullPath);
-  }
+  fs.stat(fullPath, (error, stats) => {
+    if(stats.isFile()) {
+      const size = stats.size/1000 + 'kb';
+      const extension = path.extname(fullPath);
+      const name = path.basename(fullPath).replace(extension, '');
+      console.log(`${name} - ${extension} - ${size}`);
+    } else {
+      readDirectory(fullPath);
+    }
+  });
 };
+
 
 console.log('\nFiles: ');
 readDirectory(fileName);
