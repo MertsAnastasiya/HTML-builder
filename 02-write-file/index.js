@@ -12,6 +12,10 @@ stdin.on('data', text => {
   if(text.includes('exit')) process.exit();
 });
 
+process.on('SIGINT', () => {
+  process.exit();
+});
+
 process.on('exit', () => {
-  console.log('Doi!');
+  console.log('Good Bye!');
 });
