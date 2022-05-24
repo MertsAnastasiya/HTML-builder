@@ -23,9 +23,10 @@ const getResult = (fullPath) => {
       const extension = path.extname(fullPath);
       const name = path.basename(fullPath).replace(extension, '');
       console.log(`${name} - ${extension} - ${size}`);
-    } else {
-      readDirectory(fullPath);
     }
+    // } else {
+    //   // readDirectory(fullPath);
+    // }
   });
 };
 
