@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const fsPromises = require('fs').promises;
 
 const mainDirectory= __dirname;
 let copyDirectory = path.join(mainDirectory, 'project-dist');
@@ -16,31 +17,32 @@ const createFolder = (folderName) => {
   });
 };
 
-//copy styles
+let stylesArray = [];
+
 fs.readdir(stylesForCopy, (error, files) => {
   if(error) throw error;
   
-  files.forEach(file => {
+  files.forEach(async (file) => {
     const name = path.join(stylesForCopy, file);
     if (path.extname(name) === '.css') {
-      const readStream = fs.createReadStream(path.join(stylesForCopy, file));
-      readStream.on('error', (error) => {
-        throw error;
-      });
-      
-      readStream.on('data', (chunk) => {
-        fs.appendFile(
-          path.join(copyDirectory, 'style.css'),
-          chunk.toString(),
-          'utf8',
-          (err) => {
-            if (err) throw err;
-          }
-        );
-      });
+      await fsPromises.readFile(name)
+        .then(function(result) {
+          stylesArray.push(result);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
+
+    fsPromises.writeFile(path.join(copyDirectory, 'style.css'), stylesArray.join())
+      .then(() => {
+      })
+      .catch(er => {
+        console.log(er);
+      });
   });
 });
+
 
 const copyFile = (readPath, writePath) => {
   const readStream = fs.createReadStream(readPath.toString());
