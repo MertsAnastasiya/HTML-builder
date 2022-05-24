@@ -30,7 +30,7 @@ fs.readdir(stylesForCopy, (error, files) => {
       
       readStream.on('data', (chunk) => {
         fs.appendFile(
-          path.join(copyDirectory, 'styles.css'),
+          path.join(copyDirectory, 'style.css'),
           chunk.toString(),
           'utf8',
           (err) => {
@@ -72,3 +72,62 @@ const readFolder = (folderPath, destinationPath) => {
 createFolder(copyDirectory);
 
 readFolder(assetsPathForCopy, copyDirectory);
+
+const createHtmlFile = () => {
+  let strChunk = '';
+  // let newStr = '';
+  const readStream = fs.createReadStream(path.join(mainDirectory, 'template.html'));
+  readStream.on('error', (error) => {
+    throw error;
+  });
+  
+  readStream.on('data', (chunk) => {
+    strChunk += chunk.toString();
+  });
+
+  fs.readdir(path.join(mainDirectory, 'components'), (error, filesHtml) => {
+    filesHtml.forEach(file => {
+      if (path.extname(file) === '.html') {
+        const readComponent = fs.createReadStream(path.join(mainDirectory, 'components', file));
+        readComponent.on('error', (error) => {
+          throw error;
+        });
+        
+        readComponent.on('data', (chunk) => {
+          const partForReplace = `{{${path.basename(file, '.html')}}}`;
+          const newPart = chunk.toString();
+          strChunk = strChunk.replace(partForReplace, newPart);
+          const wrirteHtml = fs.createWriteStream(path.join(copyDirectory, 'index.html'));
+          wrirteHtml.write(strChunk);
+        });
+      }
+    });
+  });
+  
+};
+
+// readStream.on('end', () => {
+//   const readHeader = fs.createReadStream(path.join(mainDirectory, 'components', 'header.html'));
+//   readHeader.on('error', (error) => {
+//     throw error;
+//   });
+
+//   const readHeader = fs.createReadStream(path.join(mainDirectory, 'components', 'header.html'));
+//   readHeader.on('error', (error) => {
+//     throw error;
+//   });
+
+//   readHeader.on('data', (chunk) => {
+//     const newStr = strChunk.replace('{{header}}', chunk);
+//     fs.appendFile(path.join(copyDirectory, 'index.html'), newStr, function (err) {
+//       if (err) throw err;
+//       console.log('Saved!');
+//     });
+//   });
+    
+    
+// });
+// };
+ 
+
+createHtmlFile();
