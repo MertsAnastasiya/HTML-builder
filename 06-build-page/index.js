@@ -34,7 +34,7 @@ fs.readdir(stylesForCopy, (error, files) => {
         });
     }
 
-    fsPromises.writeFile(path.join(copyDirectory, 'style.css'), stylesArray.join())
+    fsPromises.writeFile(path.join(copyDirectory, 'style.css'), stylesArray.join(''))
       .then(() => {
       })
       .catch(er => {

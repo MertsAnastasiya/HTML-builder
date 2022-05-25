@@ -22,7 +22,7 @@ fs.readdir(copyFrom, (error, files) => {
         });
     }
 
-    fsPromises.writeFile(path.join(copyTo, 'bundle.css'), stylesArray.join())
+    fsPromises.writeFile(path.join(copyTo, 'bundle.css'), stylesArray.join(''))
       .then(() => {
       })
       .catch(er => {
